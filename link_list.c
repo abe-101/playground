@@ -6,100 +6,102 @@
 // build single list structure
 typedef struct node
 {
-    int data;
+    int val;
     struct node *next;
 } node_t;
 
 //global var pointing at head
-struct node *head = NULL;
-// struct node *currect = NULL;
+node_t *head = NULL;
+// note_t *currect = NULL;
 
 // Prototypes
-node_t *insertFirst(int data);
-bool find(node_t *head, int n);
-void printList(node_t *head);
-void push(node_t *head, int data);
-int pop(node_t **head);
+bool find(node_t **head, int n);
+void print_list(node_t *head);
+node_t *push_front(node_t **head, int value);
+int pop_front(node_t **head);
+void destroy_list(node_t *head);
 
 
 
 int main(void)
 {
-    node_t *new = insertFirst(4);
-    bool exists = find(head, 6);
+    node_t *new = push_front(&head, 6);
+    bool exists = find(&head, 6);
     if (exists)
         printf("Found\n");
     else
         printf("Not found\n");
+    node_t *two = push_front(&head, 23);
+    print_list(head);
+    pop_front(&head);
+    destroy_list(head);
     return 0;
 }
 
 // Insert link at the first location
-node_t *insertFirst(int data)
-{
-    node_t *link = malloc(sizeof(node_t));
-    if (link == NULL) {
+node_t *push_front(node_t **head, int value) {
+    node_t *node = malloc(sizeof(node_t));
+    if (node == NULL) {
         EXIT_FAILURE;
     }
-    link->data = data;
-    link->next = head;
-    head = link;
-    return link;
+    node->val = value;
+    node->next = *head;
+
+    *head = node;
+    return node;
 }
 
-bool find(node_t *head, int data)
+bool find(node_t **head, int value)
 {
-    node_t *trav = head;
-    do
+    node_t *trav = *head;
+    while (trav)
     {
-        if (trav->data == data)
+        if (trav->val == value)
             return true;
         else
             trav = trav->next;
-    } while (trav->next);
+    } 
     return false;
 }
 
 
-void destroy(node_t *head)
-{
-
-}
-
-void printList(node_t *head) 
+void destroy_list(node_t *head)
 {
     node_t *current = head;
-    // Start from the beginning
-    while (current != NULL) {
-        printf("%d\n", current->data);
-        current = current->next;
+
+    while(current) {
+        node_t *next = current->next;
+        free(current);
+        current = next;
     }
 }
 
-void push(node_t *head, int data)
+void print_list(node_t *head) 
 {
     node_t *current = head;
-    while (current->next != NULL) {
+    while (current) {
+        printf("%d -> ", current->val);
         current = current->next;
     }
 
-    //Now we can add a new variable
-    current->next = (note_t *) malloc(sizeof(vode_t));
-    current->next->data = data;
-    current->next->next = NULL;
+    printf("\n");
 }
 
-int pop(node_t **head)
-{
-    int retval = -1;
-    node_t *next_node = NULL;
+int pop_front(node_t **head) {
     if (*head == NULL) {
-        return -1;
+        printf("Unable to pop_front an emtpy list.");
+        exit(EXIT_FAILURE);
     }
 
-    next_node = (*head)->next;
-    retval = (*head)-data;
-    free(*head);
-    *head = next_node;
-    return retval;
+    int value = (*head)->val;
+
+    node_t *front = *head;
+    *head = front->next;
+
+    free(front);
+
+    return value;
 }
+
+
+
