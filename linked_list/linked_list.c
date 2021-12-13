@@ -11,6 +11,7 @@ struct node *first = NULL;
 // prototypes
 struct node *add_to_list(struct node *list, int n);
 struct node *read_numbers(void);
+struct node *search_list(struct node *list, int n);
 
 int main(void)
 {
@@ -46,4 +47,11 @@ struct node *read_numbers(void)
             return first;
         first = add_to_list(first, n);
     }
+}
+
+struct node *search_list(struct node *list, int n)
+{
+    while (list != NULL&& list->value != n)
+        list = list->next;
+    return list;
 }
